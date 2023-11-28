@@ -13,6 +13,7 @@ from Arrow import Arrow
 marbles = []
 guesses = []
 code = []
+current_arrow = []
 round_num = 1
 
 def secret_code():
@@ -36,11 +37,10 @@ def background_screen():
     lst = ["checkbutton.gif", "xbutton.gif", "quit.gif",
            "file_error.gif", "leaderboard_error.gif", "Lose.gif",
            "quitmsg.gif", "winner.gif"]
-    def register(lst):
-        for each in lst:
-            s.register_shape(each) # registers gif files for use
     
-    register(lst)
+    for each in lst:
+        s.register_shape(each) # registers gif files for use
+    
 
 def left_box():
     t = turtle.Turtle()
@@ -181,60 +181,86 @@ def guess_buttons():
         marbles.append(m)
         m.draw()
         x += 55
- 
-def check_button():
+
+
+
+def red_arrow(round_num):
+    y_coordinate = 390 - (round_num - 1) * 70
+    return Arrow(Point(-350, y_coordinate), "red")
     
+
+def check_guess(x, y):
+    global round_num
+    global guesses
+    global code
+    global current_arrow
+    print(guesses)
+        
+    bulls = 0 # correct position, black
+    cows = 0 # correct color, red
+
+    for each in marbles:
+        each.draw()
+    for i in range(len(code)):
+        if guesses[i] == code[i]:
+            bulls += 1
+        elif guesses[i] in code:
+            cows += 1
+            
+           
+    draw_side_marbles(round_num, bulls, cows)
+    round_num += 1
+    print(round_num)
+    """
+    y_coordinate = 390 - (round_num - 1) * 70
+    red_arrow = Arrow(Point(-350, y_coordinate), "red")
+    red_arrow.position = Point(-350, y_coordinate)
+    
+    red_arrow.erase()
+    red_arrow.draw()
+    """
+    guesses.clear()
+    if bulls == len(code):
+        t = turtle.Turtle()
+        t.shape("winner.gif")
+
+        turtle.ontimer(turtle.bye, 3000) # closes window after 3 secs
+    elif round_num > 1:
+        if current_arrow:
+            current_arrow.erase()
+            print("erased")
+            current_arrow = red_arrow(round_num)
+            current_arrow.draw()
+        #return True
+    #return False
+
+
+def check_button():
+    global current_arrow
     t = turtle.Turtle()
     t.speed(0)
     t.penup()
     t.goto(0, -380)
     t.shape("checkbutton.gif")
 
-    y_coordinate = 390 - (round_num - 1) * 70
-    red_arrow = Arrow(Point(-350, y_coordinate), "red")
-    red_arrow.erase()
-    red_arrow.draw()
-    
-    def check_guess(x, y):
-        global round_num
-        global guesses
-        global code
-        print(guesses)
+    if round_num == 1 and not current_arrow:
+        current_arrow = red_arrow(round_num)
+        current_arrow.draw()
         
-        bulls = 0 # correct position, black
-        cows = 0 # correct color, red
-
-        for each in marbles:
-            each.draw()
-        for i in range(len(code)):
-            if guesses[i] == code[i]:
-                bulls += 1
-            elif guesses[i] in code:
-                cows += 1
-            
-           
-        draw_side_marbles(round_num, bulls, cows)
-        round_num += 1
-        print(round_num)
-        y_coordinate = 390 - (round_num - 1) * 70
-        red_arrow.position = Point(-350, y_coordinate)
-        red_arrow.erase()
-        red_arrow.draw()
-        guesses.clear()
-        if bulls == len(code):
-            t = turtle.Turtle()
-            t.shape("winner.gif")
-
-            turtle.exitonclick()
-            return True
-        return False
-      
+   
     t.onclick(check_guess)
 
       
     
+def reset(x, y):
+    global marbles
+    guesses = []
 
-        
+    for each in marbles:
+        if not each.is_empty:
+            each.draw()
+            draw_marbles()
+           
     
 def x_button():
     t = turtle.Turtle()
@@ -243,17 +269,16 @@ def x_button():
     t.goto(80, -380)
     t.shape("xbutton.gif")
 
-    
-    def reset(x, y):
-        global marbles
-        guesses = []
-        for each in marbles:
-            each.draw()
-            draw_marbles()
-        
-
     t.onclick(reset)
     print("x")
+
+    
+def quit_msg(x, y):
+    q = turtle.Turtle()
+    q.goto(0, 0)
+    q.shape("quitmsg.gif")
+    turtle.ontimer(turtle.bye, 3000)
+    
 
 def quit_button():
     t = turtle.Turtle()
@@ -263,38 +288,10 @@ def quit_button():
     
     t.goto(300, -380)
     t.shape("quit.gif")
-    
-    
-    def quit_msg(x, y):
-        q = turtle.Turtle()
-        q.goto(0, 0)
-        q.shape("quitmsg.gif")
-        turtle.exitonclick()
-        return True
-        
-        
+
     t.onclick(quit_msg)
-    
 
-def red_arrow(round_num):
-    t = turtle.Turtle()
-    t.speed(0)
-    t.pensize(10)
-    t.penup()
-    
-    
-    y_coordinate = 390 - (round_num - 1) * 70
-
-    # t.clear()
-    # turtle.update()
-    
-    t.goto(-350, y_coordinate)
-    t.turtlesize(2, 2)
-    t.fillcolor("red")
-
-    
-        
-    
+  
 def window():
     background_screen()
     #username()
@@ -319,8 +316,7 @@ def click_guesses(x,y):
                     print("should be empty~")
                     draw_marbles()
                     
-                    
-                    
+                                
 def main():
     
     global round_num
@@ -331,9 +327,9 @@ def main():
     draw_marbles()
     draw_side_marbles(round_num)
     
-  
     
     guess_buttons()
+
     x_button()
     check_button()
     

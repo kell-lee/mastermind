@@ -10,7 +10,9 @@ class Arrow:
         self.size = size
         #self.pen.hideturtle()
         self.position = position
+        self.visible = False
         self.pen.speed(0)
+        
 
     def new_pen(self):
         
@@ -21,6 +23,7 @@ class Arrow:
         #y_coordinate = 390 - (round_num - 1) * 70
         #X_COORDINATE = -350
         self.pen.goto(self.position.x, self.position.y)
+        self.visible = True
         self.pen.down()
         self.pen.shapesize(2, 2)
         self.pen.fillcolor(self.color)
@@ -28,11 +31,13 @@ class Arrow:
         self.pen.end_fill()
 
     def erase(self):
-        self.pen.clear()
+        self.pen.hideturtle()
+        self.visible = False
 
 def main():
     arrow = Arrow(Point(100, 100), "red")
     arrow.draw()
+    arrow.erase()
 
 
 if __name__ == "__main__":
