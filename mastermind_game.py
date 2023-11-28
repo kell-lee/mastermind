@@ -8,7 +8,7 @@ import random
 import time
 from Marble import Marble
 from Point import Point
-
+from Arrow import Arrow
 
 marbles = []
 guesses = []
@@ -16,8 +16,9 @@ code = []
 round_num = 1
 
 def secret_code():
+    global code
     colors = ["blue", "red", "green", "yellow", "purple", "black"]
-   
+    
     NUM_COLORS = 4
     code.clear()
     for i in range(NUM_COLORS):
@@ -32,14 +33,13 @@ def background_screen():
     s.title("CS5001 MasterMind Code Game")
     s.setup(width=800, height=1000)
 
-    lst = ["checkbutton.gif", "xbutton.gif", "quit.gif", "lose.gif",
+    lst = ["checkbutton.gif", "xbutton.gif", "quit.gif",
            "file_error.gif", "leaderboard_error.gif", "Lose.gif",
            "quitmsg.gif", "winner.gif"]
-    def register(lst):
-        for each in lst:
-            s.register_shape(each) # registers gif files for use
     
-    register(lst)
+    for each in lst:
+        s.register_shape(each) # registers gif files for use
+    
 
 def left_box():
     t = turtle.Turtle()
@@ -107,6 +107,9 @@ def username():
 def draw_marbles():
     # m = Marble(Point(x, y), "black", 20)
     # m.draw_empty()
+    global round_num
+    global guesses
+    
     i = 1
     x = 0
     y = 0
@@ -126,6 +129,8 @@ def draw_marbles():
         i += 1
         
 def draw_side_marbles(round_num, bulls=0, cows=0):
+    
+    
     i = 1
     y = 0
     x = 0
@@ -165,55 +170,93 @@ def draw_side_marbles(round_num, bulls=0, cows=0):
         i += 1
 
 def guess_buttons():
+    global marbles
     colors = ["blue", "red", "green", "yellow", "purple", "black"]
     x = 0
     
-    s = turtle.Screen()
-    
+   
     for each in colors:
         m = Marble(Point(-350 + x, -390), each, 20)
-        m.draw()
         marbles.append(m)
+        m.draw()
         x += 55
- 
-def check_button():
+
+current_arrow = None
+
+def red_arrow(round_num):
+    y_coordinate = 390 - (round_num - 1) * 70
+    return Arrow(Point(-350, y_coordinate), "red")
     
+
+def check_guess(x, y):
+    global round_num
+    global guesses
+    global code
+    global current_arrow
+    print(guesses)
+        
+    bulls = 0 # correct position, black
+    cows = 0 # correct color, red
+
+    for each in marbles:
+        each.draw()
+    for i in range(len(code)):
+        if guesses[i] == code[i]:
+            bulls += 1
+        elif guesses[i] in code:
+            cows += 1
+            
+           
+    draw_side_marbles(round_num, bulls, cows)
+    round_num += 1
+    print(round_num)
+    """
+    y_coordinate = 390 - (round_num - 1) * 70
+    red_arrow = Arrow(Point(-350, y_coordinate), "red")
+    red_arrow.position = Point(-350, y_coordinate)
+    
+    red_arrow.erase()
+    red_arrow.draw()
+    """
+    guesses.clear()
+    if bulls == len(code):
+        t = turtle.Turtle()
+        t.shape("winner.gif")
+
+        turtle.ontimer(turtle.bye, 3000) # closes window after 3 secs
+    elif round_num > 1:
+        if current_arrow is not None:
+            current_arrow.erase()
+            print("erased")
+            current_arrow = red_arrow(round_num)
+            current_arrow.draw()
+        #return True
+    #return False
+
+
+def check_button():
+    global current_arrow
     t = turtle.Turtle()
     t.speed(0)
     t.penup()
     t.goto(0, -380)
     t.shape("checkbutton.gif")
 
-    
-    def check_guess(x, y):
-        global round_num
-        global guesses
-        print(guesses)
-        bulls = 0 # correct position, black
-        cows = 0 # correct color, red
-
-        for each in marbles:
-            each.draw()
-        for i in range(len(code)):
-            if guesses[i] == code[i]:
-                bulls += 1
-            elif guesses[i] in code:
-                cows += 1
-            
-           
-        draw_side_marbles(round_num, bulls, cows)
-        round_num += 1
-        
-        guesses.clear()
-        if bulls == len(code):
-            t = turtle.Turtle()
-            t.shape("winner.gif")
-
-            turtle.exitonclick()
-        
-        
+    if round_num == 1 and current_arrow is None:
+        current_arrow = red_arrow(round_num)
+        current_arrow.draw()
+   
     t.onclick(check_guess)
-    red_arrow(round_num)
+
+      
+    
+def reset(x, y):
+    global marbles
+    guesses = []
+    for each in marbles:
+        each.draw()
+        draw_marbles()
+           
     
 def x_button():
     t = turtle.Turtle()
@@ -222,51 +265,29 @@ def x_button():
     t.goto(80, -380)
     t.shape("xbutton.gif")
 
-    
-    def reset(x, y):
-        for each in marbles:
-            each.draw()
-        guesses = []
-
     t.onclick(reset)
+    print("x")
+
+    
+def quit_msg(x, y):
+    q = turtle.Turtle()
+    q.goto(0, 0)
+    q.shape("quitmsg.gif")
+    turtle.exitonclick()
+    
 
 def quit_button():
     t = turtle.Turtle()
-    s = turtle.Screen()
+    
     t.speed(0)
     t.penup()
     
     t.goto(300, -380)
     t.shape("quit.gif")
-    q = turtle.Turtle()
-    
-    def quit_msg(x, y):
-        q.goto(0, 0)
-        q.shape("quitmsg.gif")
-        turtle.exitonclick()
-        
+
     t.onclick(quit_msg)
-    
 
-def red_arrow(round_num):
-    t = turtle.Turtle()
-    t.speed(0)
-    t.pensize(10)
-    t.penup()
-    
-    
-    y_coordinate = 390 - (round_num - 1) * 70
-
-    t.clear()
-    turtle.update()
-    
-    t.goto(-350, y_coordinate)
-    t.turtlesize(2, 2)
-    t.fillcolor("red")
-
-    return t
-        
-    
+  
 def window():
     background_screen()
     #username()
@@ -275,32 +296,26 @@ def window():
     bottom_box()
     quit_button()
 
-def game_buttons():
-    check_button()
-    x_button()
-    guess_buttons()
-    red_arrow()
 
 def click_guesses(x,y):
-    #global round_num
-    i = 1
+    global guesses
+    global marbles
     
-   
     for each in marbles:
         if each.clicked_in_region(x,y):
+            print("clicked!")
             if not each.is_empty:
-                color = each.color
-                if color not in guesses and len(guesses) < 4:
-                    guesses.append(color)
+                
+                if len(guesses) < 4 and each.color not in guesses:
+                    guesses.append(each.color)
                     each.draw_empty()
+                    print("should be empty~")
                     draw_marbles()
-                    turtle.update()
-        if len(guesses) == 4:
-            break
-
-
+                    
+                                
 def main():
-    #screen = turtle.Screen()
+    
+    global round_num
     secret_code()
     print(code)
     print("---------\n")
@@ -308,17 +323,22 @@ def main():
     draw_marbles()
     draw_side_marbles(round_num)
     
-  
-    while round_num <= 10:
-        
-        guess_buttons()
-        check_button()
-        x_button()
-        
-        turtle.onscreenclick(click_guesses)
-        red_arrow(round_num)
+    
+    guess_buttons()
 
-    turtle.mainloop()
+    x_button()
+    check_button()
+    
+        
+    turtle.onscreenclick(click_guesses)
+
+    #if round_num == 10 and check
+    
+
+       
+
+    #turtle.mainloop()
+    
 
 if __name__ == "__main__":
     main()
