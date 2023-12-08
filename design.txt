@@ -1,0 +1,15 @@
+
+    In the beginning, I decided to try and do this entire project using
+procedural decomposition since it felt more comfortable to me considering
+that we have been doing it for most of the semester. However, in
+the middle, I began having to use global variables so I made my game functions
+into methods of the MasterMindGame class. I also made the turtle board boxes
+into its own file called TurtleBoxes to maintain readability and to separate
+the background from the main game functions. Much like the Marble class,
+I put the Arrow class into its own file as well because it seemed easier
+to design and control its movements by creating its own class. 
+
+    Given that I had more time, I would have liked to refactor my code in
+order to make it the most efficient as possible. I realized while testing
+and running my game that the actions may feel slow at times and this is
+something I would like to improve moving on in the future. 

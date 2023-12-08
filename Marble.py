@@ -38,6 +38,7 @@ class Marble:
         self.pen.end_fill()
 
     def draw_empty(self):
+        #if turtle.Screen()._root is not None:
         self.erase()
         self.pen.up()
         self.pen.goto(self.position.x, self.position.y)
@@ -64,7 +65,8 @@ def main():
     k = input("enter something here and I'll fill the marble > ")
     marble.draw()
     k = input("enter something here and I'll erase the marble > ")
-    marble.erase()
+    
+    
 
 if __name__ == "__main__":
     main()
