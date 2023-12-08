@@ -8,3 +8,7 @@ On 2023-12-03 00:27:45.673578, there was a FileNotFoundError.
 On 2023-12-03 00:30:41.941099, there was a FileNotFoundError.
 On 2023-12-03 01:23:40.028130, there was a FileNotFoundError.
 On 2023-12-03 01:24:16.685834, there was a FileNotFoundError.
+On 2023-12-08 00:27:11.947181, there was a FileNotFoundError.
+On 2023-12-08 00:28:39.105034, there was a FileNotFoundError.
+On 2023-12-08 00:29:06.989792, there was a FileNotFoundError.
+On 2023-12-08 00:31:33.850282, there was a FileNotFoundError.
